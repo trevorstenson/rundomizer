@@ -1,0 +1,20 @@
+version: '3'
+services:
+  osrm:
+    build:
+      ./osrm/.
+    command:
+      osrm-routed --algorithm mld massachusetts-latest.osrm
+    ports:
+    - 5000:5000
+  routing:
+    image: openjdk
+    depends_on:
+      - osrm
+    volumes:
+    - ./routing:/data/
+  api:
+    image: alpine
+
+  db:
+    image: postgres
