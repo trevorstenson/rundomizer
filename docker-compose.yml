@@ -1,8 +1,7 @@
 version: '3'
 services:
   osrm:
-    build:
-      ./osrm/.
+    image: galaxy.registry.jetbrains.space/rundomizer/osrm:latest
     command:
       osrm-routed --algorithm mld massachusetts-latest.osrm
     ports:
