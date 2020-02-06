@@ -1,9 +1,8 @@
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.get
-import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import kotlin.math.acos
 import kotlin.math.cos
@@ -16,9 +15,8 @@ const val EARTH_RADIUS = 6_371_000
 const val DOCKER_URL = "http://127.0.0.1"
 const val DOCKER_PORT = 5000
 
-@KtorExperimentalAPI
 fun main() {
-    val totalDistance: Double = 5.0
+    val totalDistance = 5.0
     val totalMeters = totalDistance * 1_609.344
     val lat = 42.329129
     val long = -71.086484
@@ -35,7 +33,6 @@ fun main() {
     println(test)
 }
 
-@KtorExperimentalAPI
 suspend fun calculateRoute(
     remainingDistance: Double,
     cutoffDistance: Double,
@@ -59,7 +56,7 @@ suspend fun calculateRoute(
 
     val route = mutableListOf<RouteInfo>()
 
-    val client = HttpClient(CIO) {
+    val client = HttpClient(Apache) {
         install(JsonFeature) {
             serializer = KotlinxSerializer()
         }
@@ -78,6 +75,8 @@ suspend fun calculateRoute(
     } else {
         route += calculateRoute(restDistance, cutoffDistance, newLocation, startLocation)
     }
+
+    client.close()
 
     return route
 }
